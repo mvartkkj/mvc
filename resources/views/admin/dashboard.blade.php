@@ -699,6 +699,11 @@
                     window.location.href = '{{ route("admin.clientes") }}';
                     return;
                 }
+
+                if (sectionId === 'fornecedores') {
+                    window.location.href = '{{ route("admin.fornecedores") }}';
+                    return;
+                }
                 
                 e.preventDefault();
                 

@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Cadastrar Cliente - Sabor & Cia</title>
+    <title>Editar Fornecedor - Sabor & Cia</title>
 
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
@@ -127,7 +127,6 @@
             display: flex;
             flex-direction: column;
             gap: 8px;
-            position: relative;
         }
 
         .form-group.full-width {
@@ -138,11 +137,6 @@
             font-size: 14px;
             font-weight: 500;
             color: #0a0a0a;
-        }
-
-        .form-label.required::after {
-            content: ' *';
-            color: #ef4444;
         }
 
         .form-input, .form-select {
@@ -160,10 +154,6 @@
             outline: none;
             border-color: #ea580c;
             box-shadow: 0 0 0 3px rgba(234, 88, 12, 0.1);
-        }
-
-        .form-input.error, .form-select.error {
-            border-color: #ef4444;
         }
 
         .form-error {
@@ -258,71 +248,6 @@
             font-weight: 700;
             color: #0a0a0a;
         }
-
-        .cidade-results {
-            position: absolute;
-            top: 100%;
-            left: 0;
-            right: 0;
-            background: white;
-            border: 1px solid #e5e5e5;
-            border-radius: 6px;
-            max-height: 250px;
-            overflow-y: auto;
-            z-index: 1000;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-            margin-top: 4px;
-            display: none;
-        }
-
-        .cidade-results.show {
-            display: block;
-        }
-
-        .cidade-item {
-            padding: 10px 12px;
-            cursor: pointer;
-            font-size: 14px;
-            transition: background 0.2s;
-            border-bottom: 1px solid #f5f5f5;
-        }
-
-        .cidade-item:last-child {
-            border-bottom: none;
-        }
-
-        .cidade-item:hover {
-            background: #f5f5f5;
-        }
-
-        .cidade-item.selected {
-            background: #fff7ed;
-            color: #ea580c;
-        }
-
-        .cidade-item.no-results {
-            color: #737373;
-            cursor: default;
-        }
-
-        .cidade-item.no-results:hover {
-            background: white;
-        }
-
-        .loading-spinner {
-            display: inline-block;
-            width: 14px;
-            height: 14px;
-            border: 2px solid #e5e5e5;
-            border-top-color: #ea580c;
-            border-radius: 50%;
-            animation: spin 0.6s linear infinite;
-            margin-right: 8px;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
     </style>
 </head>
 <body class="bg-background">
@@ -353,7 +278,7 @@
 
             <div class="menu-section">
                 <div class="menu-section-title">Gestão</div>
-                <a href="{{ route('admin.clientes') }}" class="menu-item active">
+                <a href="{{ route('admin.clientes') }}" class="menu-item">
                     <span class="menu-item-icon">👥</span>
                     Gerenciar Clientes
                 </a>
@@ -369,10 +294,10 @@
 
             <div class="menu-section">
                 <div class="menu-section-title">Estoque</div>
-                <a href="{{ route('admin.fornecedores') }}" class="menu-item">
-    <span class="menu-item-icon">🚚</span>
-    Fornecedores
-</a>
+                <a href="{{ route('admin.fornecedores') }}" class="menu-item active">
+                    <span class="menu-item-icon">🚚</span>
+                    Fornecedores
+                </a>
                 <a href="{{ route('admin.dashboard') }}" class="menu-item">
                     <span class="menu-item-icon">🧀</span>
                     Ingredientes
@@ -396,8 +321,8 @@
     <div class="main-content">
         <div class="top-bar">
             <div>
-                <h1 class="text-xl font-semibold text-foreground">Cadastrar Cliente</h1>
-                <p class="text-sm text-muted-foreground">Adicione um novo cliente ao sistema</p>
+                <h1 class="text-xl font-semibold text-foreground">Editar Fornecedor</h1>
+                <p class="text-sm text-muted-foreground">Atualize as informações do fornecedor</p>
             </div>
             <form method="POST" action="{{ route('logout') }}">
                 @csrf
@@ -406,8 +331,8 @@
         </div>
 
         <div class="content-card">
-            <h2>Novo Cliente</h2>
-            <p>Preencha os campos abaixo para cadastrar um novo cliente. Os campos marcados com * são obrigatórios.</p>
+            <h2>Dados do Fornecedor #{{ $fornecedor->cod_fornecedor }}</h2>
+            <p>Preencha os campos abaixo para atualizar as informações</p>
 
             @if($errors->any())
             <div style="background: #fee; border: 1px solid #fcc; color: #c33; padding: 12px; border-radius: 6px; margin-bottom: 20px;">
@@ -419,94 +344,71 @@
             </div>
             @endif
 
-            <form method="POST" action="{{ route('admin.clientes.store') }}">
+            <form method="POST" action="{{ route('admin.fornecedores.update', $fornecedor->cod_fornecedor) }}">
                 @csrf
+                @method('PUT')
 
                 <div class="form-grid">
-                    <!-- Nome -->
+                    <!-- Nome Social -->
                     <div class="form-group full-width">
-                        <label class="form-label required" for="nome">Nome Completo</label>
+                        <label class="form-label" for="nome_social">Nome Social / Razão Social *</label>
                         <input 
                             type="text" 
-                            id="nome" 
-                            name="nome" 
-                            class="form-input @error('nome') error @enderror" 
-                            value="{{ old('nome') }}" 
+                            id="nome_social" 
+                            name="nome_social" 
+                            class="form-input" 
+                            value="{{ old('nome_social', $fornecedor->nome_social) }}" 
                             required
                         />
-                        @error('nome')
+                        @error('nome_social')
                             <span class="form-error">{{ $message }}</span>
                         @enderror
                     </div>
 
-                    <!-- CPF -->
-                    <div class="form-group">
-                        <label class="form-label" for="cpf">CPF</label>
+                    <!-- Nome Fantasia -->
+                    <div class="form-group full-width">
+                        <label class="form-label" for="nome_fantasia">Nome Fantasia</label>
                         <input 
                             type="text" 
-                            id="cpf" 
-                            name="cpf" 
-                            class="form-input @error('cpf') error @enderror" 
-                            value="{{ old('cpf') }}"
-                            placeholder="12345678900"
-                            maxlength="11"
-                            pattern="[0-9]*"
-                            inputmode="numeric"
+                            id="nome_fantasia" 
+                            name="nome_fantasia" 
+                            class="form-input" 
+                            value="{{ old('nome_fantasia', $fornecedor->nome_fantasia) }}"
                         />
-                        <span class="form-hint">Apenas números (11 dígitos)</span>
-                        @error('cpf')
+                        @error('nome_fantasia')
                             <span class="form-error">{{ $message }}</span>
                         @enderror
                     </div>
 
-                    <!-- RG -->
+                    <!-- CNPJ -->
                     <div class="form-group">
-                        <label class="form-label" for="rg">RG</label>
+                        <label class="form-label" for="cnpj">CNPJ</label>
                         <input 
                             type="text" 
-                            id="rg" 
-                            name="rg" 
-                            class="form-input @error('rg') error @enderror" 
-                            value="{{ old('rg') }}"
-                            placeholder="123456789"
-                            maxlength="12"
-                            pattern="[0-9]*"
-                            inputmode="numeric"
+                            id="cnpj" 
+                            name="cnpj" 
+                            class="form-input" 
+                            value="{{ old('cnpj', $fornecedor->cnpj) }}"
+                            placeholder="12345678000190"
+                            maxlength="14"
                         />
-                        <span class="form-hint">Apenas números (até 12 dígitos)</span>
-                        @error('rg')
-                            <span class="form-error">{{ $message }}</span>
-                        @enderror
-                    </div>
-
-                    <!-- Data de Nascimento -->
-                    <div class="form-group">
-                        <label class="form-label" for="data_nasc">Data de Nascimento</label>
-                        <input 
-                            type="date" 
-                            id="data_nasc" 
-                            name="data_nasc" 
-                            class="form-input @error('data_nasc') error @enderror" 
-                            value="{{ old('data_nasc') }}"
-                        />
-                        @error('data_nasc')
+                        <span class="form-hint">Apenas números (14 dígitos)</span>
+                        @error('cnpj')
                             <span class="form-error">{{ $message }}</span>
                         @enderror
                     </div>
 
                     <!-- Celular -->
                     <div class="form-group">
-                        <label class="form-label" for="celular">Celular</label>
+                        <label class="form-label" for="celular">Celular / Telefone</label>
                         <input 
                             type="text" 
                             id="celular" 
                             name="celular" 
-                            class="form-input @error('celular') error @enderror" 
-                            value="{{ old('celular') }}"
+                            class="form-input" 
+                            value="{{ old('celular', $fornecedor->celular) }}"
                             placeholder="11987654321"
                             maxlength="11"
-                            pattern="[0-9]*"
-                            inputmode="numeric"
                         />
                         <span class="form-hint">Apenas números (10 ou 11 dígitos)</span>
                         @error('celular')
@@ -516,14 +418,13 @@
 
                     <!-- Email -->
                     <div class="form-group full-width">
-                        <label class="form-label required" for="e_mail">E-mail</label>
+                        <label class="form-label" for="e_mail">E-mail</label>
                         <input 
                             type="email" 
                             id="e_mail" 
                             name="e_mail" 
-                            class="form-input @error('e_mail') error @enderror" 
-                            value="{{ old('e_mail') }}"
-                            required
+                            class="form-input" 
+                            value="{{ old('e_mail', $fornecedor->e_mail) }}"
                         />
                         @error('e_mail')
                             <span class="form-error">{{ $message }}</span>
@@ -537,8 +438,8 @@
                             type="text" 
                             id="endereco" 
                             name="endereco" 
-                            class="form-input @error('endereco') error @enderror" 
-                            value="{{ old('endereco') }}"
+                            class="form-input" 
+                            value="{{ old('endereco', $fornecedor->endereco) }}"
                         />
                         @error('endereco')
                             <span class="form-error">{{ $message }}</span>
@@ -552,8 +453,8 @@
                             type="text" 
                             id="numero" 
                             name="numero" 
-                            class="form-input @error('numero') error @enderror" 
-                            value="{{ old('numero') }}"
+                            class="form-input" 
+                            value="{{ old('numero', $fornecedor->numero) }}"
                         />
                         @error('numero')
                             <span class="form-error">{{ $message }}</span>
@@ -567,32 +468,30 @@
                             type="text" 
                             id="bairro" 
                             name="bairro" 
-                            class="form-input @error('bairro') error @enderror" 
-                            value="{{ old('bairro') }}"
+                            class="form-input" 
+                            value="{{ old('bairro', $fornecedor->bairro) }}"
                         />
                         @error('bairro')
                             <span class="form-error">{{ $message }}</span>
                         @enderror
                     </div>
 
-                    <!-- Cidade com Autocomplete -->
+                    <!-- Cidade -->
                     <div class="form-group">
-                        <label class="form-label" for="cidade_search">Cidade</label>
-                        <input 
-                            type="text" 
-                            id="cidade_search" 
-                            class="form-input @error('cod_cidade') error @enderror" 
-                            placeholder="Digite para buscar..."
-                            value="{{ old('cidade_search') }}"
-                            autocomplete="off"
-                        />
-                        <input 
-                            type="hidden" 
+                        <label class="form-label" for="cod_cidade">Cidade</label>
+                        <select 
                             id="cod_cidade" 
                             name="cod_cidade" 
-                            value="{{ old('cod_cidade') }}"
-                        />
-                        <div id="cidade_results" class="cidade-results"></div>
+                            class="form-select"
+                        >
+                            <option value="">Selecione...</option>
+                            @foreach($cidades as $cidade)
+                                <option value="{{ $cidade->cod_cidade }}" 
+                                    {{ old('cod_cidade', $fornecedor->cod_cidade) == $cidade->cod_cidade ? 'selected' : '' }}>
+                                    {{ $cidade->nome }} - {{ $cidade->uf }}
+                                </option>
+                            @endforeach
+                        </select>
                         @error('cod_cidade')
                             <span class="form-error">{{ $message }}</span>
                         @enderror
@@ -605,72 +504,29 @@
                             type="text" 
                             id="cep" 
                             name="cep" 
-                            class="form-input @error('cep') error @enderror" 
-                            value="{{ old('cep') }}"
+                            class="form-input" 
+                            value="{{ old('cep', $fornecedor->cep) }}"
                             placeholder="12345678"
                             maxlength="8"
-                            pattern="[0-9]*"
-                            inputmode="numeric"
                         />
                         <span class="form-hint">Apenas números (8 dígitos)</span>
                         @error('cep')
                             <span class="form-error">{{ $message }}</span>
                         @enderror
                     </div>
-
-                    <!-- Cargo -->
-                    <div class="form-group">
-                        <label class="form-label required" for="cargo_id">Cargo</label>
-                        <select 
-                            id="cargo_id" 
-                            name="cargo_id" 
-                            class="form-select @error('cargo_id') error @enderror"
-                            required
-                        >
-                            <option value="">Selecione...</option>
-                            @foreach($cargos as $cargo)
-                                <option value="{{ $cargo->id }}" {{ old('cargo_id') == $cargo->id ? 'selected' : '' }}>
-                                    {{ $cargo->nome }}
-                                </option>
-                            @endforeach
-                        </select>
-                        @error('cargo_id')
-                            <span class="form-error">{{ $message }}</span>
-                        @enderror
-                    </div>
-
-                    <!-- Senha -->
-                    <div class="form-group full-width">
-                        <label class="form-label required" for="passwd">Senha</label>
-                        <input 
-                            type="password" 
-                            id="passwd" 
-                            name="passwd" 
-                            class="form-input @error('passwd') error @enderror" 
-                            placeholder="Digite uma senha (mínimo 6 caracteres)"
-                            required
-                        />
-                        @error('passwd')
-                            <span class="form-error">{{ $message }}</span>
-                        @enderror
-                    </div>
                 </div>
 
                 <div class="form-actions">
-                    <a href="{{ route('admin.clientes') }}" class="btn-secondary">Cancelar</a>
-                    <button type="submit" class="btn-primary">Cadastrar Cliente</button>
+                    <a href="{{ route('admin.fornecedores') }}" class="btn-secondary">Cancelar</a>
+                    <button type="submit" class="btn-primary">Salvar Alterações</button>
                 </div>
             </form>
         </div>
     </div>
 
     <script>
-        // Apenas REMOVE caracteres não numéricos em campos numéricos
-        document.getElementById('cpf').addEventListener('input', function(e) {
-            this.value = this.value.replace(/\D/g, '');
-        });
-
-        document.getElementById('rg').addEventListener('input', function(e) {
+        // Remove caracteres não numéricos em campos numéricos
+        document.getElementById('cnpj').addEventListener('input', function(e) {
             this.value = this.value.replace(/\D/g, '');
         });
 
@@ -680,105 +536,6 @@
 
         document.getElementById('cep').addEventListener('input', function(e) {
             this.value = this.value.replace(/\D/g, '');
-        });
-
-        // Autocomplete de cidades
-        const cidadeSearch = document.getElementById('cidade_search');
-        const cidadeResults = document.getElementById('cidade_results');
-        const codCidadeInput = document.getElementById('cod_cidade');
-        let searchTimeout;
-        let isLoading = false;
-
-        cidadeSearch.addEventListener('input', function() {
-            const query = this.value.trim();
-            
-            clearTimeout(searchTimeout);
-            
-            if (query.length < 2) {
-                cidadeResults.classList.remove('show');
-                return;
-            }
-            
-            searchTimeout = setTimeout(() => {
-                if (isLoading) return;
-                
-                isLoading = true;
-                cidadeResults.innerHTML = '<div class="cidade-item no-results"><span class="loading-spinner"></span>Buscando...</div>';
-                cidadeResults.classList.add('show');
-                
-                fetch(`{{ route('admin.buscar.cidades') }}?q=${encodeURIComponent(query)}`, {
-                    headers: {
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
-                        'Accept': 'application/json'
-                    }
-                })
-                .then(res => res.json())
-                .then(data => {
-                    isLoading = false;
-                    
-                    if (data.length === 0) {
-                        cidadeResults.innerHTML = '<div class="cidade-item no-results">Nenhuma cidade encontrada</div>';
-                    } else {
-                        cidadeResults.innerHTML = data.map(cidade => 
-                            `<div class="cidade-item" data-id="${cidade.cod_cidade}" data-nome="${cidade.nome} - ${cidade.uf}">
-                                ${cidade.nome} - ${cidade.uf}
-                            </div>`
-                        ).join('');
-                        
-                        document.querySelectorAll('.cidade-item[data-id]').forEach(item => {
-                            item.addEventListener('click', function() {
-                                cidadeSearch.value = this.getAttribute('data-nome');
-                                codCidadeInput.value = this.getAttribute('data-id');
-                                cidadeResults.classList.remove('show');
-                            });
-                        });
-                    }
-                })
-                .catch(err => {
-                    isLoading = false;
-                    console.error('Erro ao buscar cidades:', err);
-                    cidadeResults.innerHTML = '<div class="cidade-item no-results">Erro ao buscar cidades</div>';
-                });
-            }, 300);
-        });
-
-        document.addEventListener('click', function(e) {
-            if (!cidadeSearch.contains(e.target) && !cidadeResults.contains(e.target)) {
-                cidadeResults.classList.remove('show');
-            }
-        });
-
-        cidadeSearch.addEventListener('blur', function() {
-            setTimeout(() => {
-                if (this.value.trim() === '') {
-                    codCidadeInput.value = '';
-                }
-            }, 200);
-        });
-
-        cidadeSearch.addEventListener('keydown', function(e) {
-            const items = cidadeResults.querySelectorAll('.cidade-item[data-id]');
-            if (items.length === 0) return;
-            
-            const selected = cidadeResults.querySelector('.cidade-item.selected');
-            let index = Array.from(items).indexOf(selected);
-            
-            if (e.key === 'ArrowDown') {
-                e.preventDefault();
-                if (selected) selected.classList.remove('selected');
-                index = (index + 1) % items.length;
-                items[index].classList.add('selected');
-                items[index].scrollIntoView({ block: 'nearest' });
-            } else if (e.key === 'ArrowUp') {
-                e.preventDefault();
-                if (selected) selected.classList.remove('selected');
-                index = (index - 1 + items.length) % items.length;
-                items[index].classList.add('selected');
-                items[index].scrollIntoView({ block: 'nearest' });
-            } else if (e.key === 'Enter' && selected) {
-                e.preventDefault();
-                selected.click();
-            }
         });
     </script>
 </body>

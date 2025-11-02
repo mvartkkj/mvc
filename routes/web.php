@@ -6,6 +6,7 @@ use App\Http\Controllers\ScanController;
 use App\Http\Controllers\MenuController;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\FornecedorController;
 
 // ============ ROTAS PÚBLICAS ============
 Route::get('/', function () {
@@ -54,6 +55,14 @@ Route::middleware(['admin'])->prefix('admin')->name('admin.')->group(function ()
     Route::get('/clientes/{id}/edit', [AdminController::class, 'editCliente'])->name('clientes.edit');
     Route::put('/clientes/{id}', [AdminController::class, 'updateCliente'])->name('clientes.update');
     Route::delete('/clientes/{id}', [AdminController::class, 'deleteCliente'])->name('clientes.delete');
+
+    // Fornecedores - CRUD Completo
+    Route::get('/fornecedores', [FornecedorController::class, 'index'])->name('fornecedores');
+    Route::get('/fornecedores/create', [FornecedorController::class, 'create'])->name('fornecedores.create');
+    Route::post('/fornecedores', [FornecedorController::class, 'store'])->name('fornecedores.store');
+    Route::get('/fornecedores/{id}/edit', [FornecedorController::class, 'edit'])->name('fornecedores.edit');
+    Route::put('/fornecedores/{id}', [FornecedorController::class, 'update'])->name('fornecedores.update');
+    Route::delete('/fornecedores/{id}', [FornecedorController::class, 'destroy'])->name('fornecedores.destroy');
 
     // Buscar cidades via AJAX
     Route::get('/buscar-cidades', [AdminController::class, 'buscarCidades'])->name('buscar.cidades');

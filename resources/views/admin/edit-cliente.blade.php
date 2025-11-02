@@ -288,10 +288,10 @@
 
             <div class="menu-section">
                 <div class="menu-section-title">Estoque</div>
-                <a href="{{ route('admin.dashboard') }}" class="menu-item">
-                    <span class="menu-item-icon">🚚</span>
-                    Fornecedores
-                </a>
+                <a href="{{ route('admin.fornecedores') }}" class="menu-item">
+    <span class="menu-item-icon">🚚</span>
+    Fornecedores
+</a>
                 <a href="{{ route('admin.dashboard') }}" class="menu-item">
                     <span class="menu-item-icon">🧀</span>
                     Ingredientes

@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Clientes - Sabor & Cia</title>
+    <title>Fornecedores - Sabor & Cia</title>
 
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
@@ -210,7 +210,7 @@
 
             <div class="menu-section">
                 <div class="menu-section-title">Gestão</div>
-                <a href="{{ route('admin.clientes') }}" class="menu-item active">
+                <a href="{{ route('admin.clientes') }}" class="menu-item">
                     <span class="menu-item-icon">👥</span>
                     Gerenciar Clientes
                 </a>
@@ -226,7 +226,7 @@
 
             <div class="menu-section">
                 <div class="menu-section-title">Estoque</div>
-                <a href="{{ route('admin.fornecedores') }}" class="menu-item">
+                <a href="{{ route('admin.fornecedores') }}" class="menu-item active">
                     <span class="menu-item-icon">🚚</span>
                     Fornecedores
                 </a>
@@ -253,8 +253,8 @@
     <div class="main-content">
         <div class="top-bar">
             <div>
-                <h1 class="text-xl font-semibold text-foreground">Gerenciar Clientes</h1>
-                <p class="text-sm text-muted-foreground">Lista de todos os clientes cadastrados</p>
+                <h1 class="text-xl font-semibold text-foreground">Fornecedores</h1>
+                <p class="text-sm text-muted-foreground">Gerencie seus fornecedores de ingredientes e insumos</p>
             </div>
             <form method="POST" action="{{ route('logout') }}">
                 @csrf
@@ -278,29 +278,29 @@
             <div class="flex justify-between items-center mb-6">
                 <div class="flex w-full items-center">
                     <div>
-                        <h2>Lista de Clientes</h2>
-                        <p>Total: {{ $clientes->total() }} clientes cadastrados</p>
+                        <h2>Lista de Fornecedores</h2>
+                        <p>Total: {{ $fornecedores->total() }} fornecedores cadastrados</p>
                     </div>
                     <div class="flex gap-3 items-center ml-5">
-                        <!-- Botão de Cadastrar Novo Cliente -->
-                        <a href="{{ route('admin.clientes.create') }}" 
+                        <!-- Botão de Cadastrar Novo Fornecedor -->
+                        <a href="{{ route('admin.fornecedores.create') }}" 
                             style="background: #ef4444; color: white; padding: 10px 20px; border-radius: 6px; font-size: 14px; font-weight: 500; display: inline-flex; align-items: center; gap: 8px; text-decoration: none; transition: all 0.2s;"
                             onmouseover="this.style.background='#dc2626'" 
                             onmouseout="this.style.background='#ef4444'">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                     <path d="M12 5v14M5 12h14"/>
                                 </svg>
-                                Novo Cliente
+                                Novo Fornecedor
                         </a>
                     </div>
                 </div>
-                <form method="GET" action="{{ route('admin.clientes') }}" class="flex gap-2">
+                <form method="GET" action="{{ route('admin.fornecedores') }}" class="flex gap-2">
                     <div class="relative">
                         <input 
                             type="text" 
                             name="search" 
                             value="{{ $search ?? '' }}"
-                            placeholder="Buscar por nome, email, celular..." 
+                            placeholder="Buscar por nome, CNPJ, email..." 
                             class="w-80 h-10 pl-10 pr-4 bg-background border border-input rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50"
                         />
                         <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -311,7 +311,7 @@
                         Buscar
                     </button>
                     @if($search ?? false)
-                    <a href="{{ route('admin.clientes') }}" class="px-4 h-10 bg-muted text-foreground rounded-lg hover:bg-muted/80 transition-colors font-medium flex items-center">
+                    <a href="{{ route('admin.fornecedores') }}" class="px-4 h-10 bg-muted text-foreground rounded-lg hover:bg-muted/80 transition-colors font-medium flex items-center">
                         Limpar
                     </a>
                     @endif
@@ -323,34 +323,26 @@
                     <thead>
                         <tr>
                             <th>ID</th>
-                            <th>Nome</th>
+                            <th>Nome Social</th>
+                            <th>Nome Fantasia</th>
+                            <th>CNPJ</th>
                             <th>Email</th>
                             <th>Celular</th>
-                            <th>Cargo</th>
-                            <th>CEP</th>
                             <th style="text-align: center; width: 150px;">Ações</th>
                         </tr>
                     </thead>
                     <tbody>
-                        @forelse($clientes as $cliente)
+                        @forelse($fornecedores as $fornecedor)
                         <tr>
-                            <td>#{{ $cliente->cod_cliente }}</td>
-                            <td>{{ $cliente->nome }}</td>
-                            <td>{{ $cliente->e_mail ?? '-' }}</td>
-                            <td>{{ $cliente->celular ?? '-' }}</td>
-                            <td>
-                                @if($cliente->cargo)
-                                    <span class="px-2 py-1 bg-primary/10 text-primary rounded text-xs font-medium">
-                                        {{ $cliente->cargo->nome }}
-                                    </span>
-                                @else
-                                    <span class="text-muted-foreground">-</span>
-                                @endif
-                            </td>
-                            <td>{{ $cliente->cep ?? '-' }}</td>
+                            <td>#{{ $fornecedor->cod_fornecedor }}</td>
+                            <td>{{ $fornecedor->nome_social }}</td>
+                            <td>{{ $fornecedor->nome_fantasia ?? '-' }}</td>
+                            <td>{{ $fornecedor->cnpj ?? '-' }}</td>
+                            <td>{{ $fornecedor->e_mail ?? '-' }}</td>
+                            <td>{{ $fornecedor->celular ?? '-' }}</td>
                             <td>
                                 <div class="flex gap-2 justify-center">
-                                    <a href="{{ route('admin.clientes.edit', $cliente->cod_cliente) }}" 
+                                    <a href="{{ route('admin.fornecedores.edit', $fornecedor->cod_fornecedor) }}" 
                                     style="background: #0a0a0a; color: white; padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: 500; display: inline-flex; align-items: center; gap: 4px; text-decoration: none; transition: all 0.2s;"
                                     onmouseover="this.style.background='#3a3939ff'" 
                                     onmouseout="this.style.background='#0a0a0a'">
@@ -359,11 +351,11 @@
                                         </svg>
                                         Editar
                                     </a>
-                                    <form method="POST" action="{{ route('admin.clientes.delete', $cliente->cod_cliente) }}" class="delete-form" style="display: inline;">
+                                    <form method="POST" action="{{ route('admin.fornecedores.destroy', $fornecedor->cod_fornecedor) }}" class="delete-form" style="display: inline;">
                                         @csrf
                                         @method('DELETE')
                                         <button type="button" class="btn-delete" 
-                                                data-cliente-nome="{{ $cliente->nome }}"
+                                                data-fornecedor-nome="{{ $fornecedor->nome_social }}"
                                                 style="background: #ef4444; color: white; padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: 500; display: inline-flex; align-items: center; gap: 4px; border: none; cursor: pointer; transition: all 0.2s;"
                                                 onmouseover="this.style.background='#dc2626'" 
                                                 onmouseout="this.style.background='#ef4444'">
@@ -380,9 +372,9 @@
                         <tr>
                             <td colspan="7" class="text-center text-muted-foreground py-8">
                                 @if($search ?? false)
-                                    Nenhum cliente encontrado com "{{ $search }}"
+                                    Nenhum fornecedor encontrado com "{{ $search }}"
                                 @else
-                                    Nenhum cliente cadastrado
+                                    Nenhum fornecedor cadastrado
                                 @endif
                             </td>
                         </tr>
@@ -400,11 +392,11 @@
                         event.preventDefault();
                         
                         const form = this.closest('.delete-form');
-                        const clienteNome = this.getAttribute('data-cliente-nome');
+                        const fornecedorNome = this.getAttribute('data-fornecedor-nome');
 
                         Swal.fire({
                             title: 'Você tem certeza?',
-                            html: `Deseja realmente excluir o cliente <strong>${clienteNome}</strong>?<br><span style="color: #dc2626; font-size: 14px;">Esta ação não pode ser desfeita!</span>`,
+                            html: `Deseja realmente excluir o fornecedor <strong>${fornecedorNome}</strong>?<br><span style="color: #dc2626; font-size: 14px;">Esta ação não pode ser desfeita!</span>`,
                             icon: 'warning',
                             showCancelButton: true,
                             confirmButtonColor: '#ef4444',
@@ -431,44 +423,44 @@
             </script>
 
             <!-- Paginação -->
-            @if($clientes->hasPages())
+            @if($fornecedores->hasPages())
             <div class="mt-6 flex items-center justify-between border-t border-border pt-4">
                 <div class="text-sm text-muted-foreground">
-                    Mostrando {{ $clientes->firstItem() }} a {{ $clientes->lastItem() }} de {{ $clientes->total() }} clientes
+                    Mostrando {{ $fornecedores->firstItem() }} a {{ $fornecedores->lastItem() }} de {{ $fornecedores->total() }} fornecedores
                 </div>
                 <div class="flex gap-2">
-                    @if ($clientes->onFirstPage())
+                    @if ($fornecedores->onFirstPage())
                         <span class="px-3 py-2 bg-muted/50 text-muted-foreground rounded cursor-not-allowed">Anterior</span>
                     @else
-                        <a href="{{ $clientes->previousPageUrl() }}" class="px-3 py-2 bg-white border border-border text-foreground rounded hover:bg-muted transition-colors">Anterior</a>
+                        <a href="{{ $fornecedores->previousPageUrl() }}" class="px-3 py-2 bg-white border border-border text-foreground rounded hover:bg-muted transition-colors">Anterior</a>
                     @endif
 
                     <div class="flex gap-1">
-                        @if($clientes->currentPage() > 3)
-                            <a href="{{ $clientes->url(1) }}" class="px-3 py-2 bg-white border border-border text-foreground rounded hover:bg-muted transition-colors">1</a>
-                            @if($clientes->currentPage() > 4)
+                        @if($fornecedores->currentPage() > 3)
+                            <a href="{{ $fornecedores->url(1) }}" class="px-3 py-2 bg-white border border-border text-foreground rounded hover:bg-muted transition-colors">1</a>
+                            @if($fornecedores->currentPage() > 4)
                                 <span class="px-3 py-2 text-muted-foreground">...</span>
                             @endif
                         @endif
 
-                        @for($i = max(1, $clientes->currentPage() - 2); $i <= min($clientes->lastPage(), $clientes->currentPage() + 2); $i++)
-                            @if ($i == $clientes->currentPage())
+                        @for($i = max(1, $fornecedores->currentPage() - 2); $i <= min($fornecedores->lastPage(), $fornecedores->currentPage() + 2); $i++)
+                            @if ($i == $fornecedores->currentPage())
                                 <span class="px-3 py-2 bg-primary text-white rounded font-medium">{{ $i }}</span>
                             @else
-                                <a href="{{ $clientes->url($i) }}" class="px-3 py-2 bg-white border border-border text-foreground rounded hover:bg-muted transition-colors">{{ $i }}</a>
+                                <a href="{{ $fornecedores->url($i) }}" class="px-3 py-2 bg-white border border-border text-foreground rounded hover:bg-muted transition-colors">{{ $i }}</a>
                             @endif
                         @endfor
 
-                        @if($clientes->currentPage() < $clientes->lastPage() - 2)
-                            @if($clientes->currentPage() < $clientes->lastPage() - 3)
+                        @if($fornecedores->currentPage() < $fornecedores->lastPage() - 2)
+                            @if($fornecedores->currentPage() < $fornecedores->lastPage() - 3)
                                 <span class="px-3 py-2 text-muted-foreground">...</span>
                             @endif
-                            <a href="{{ $clientes->url($clientes->lastPage()) }}" class="px-3 py-2 bg-white border border-border text-foreground rounded hover:bg-muted transition-colors">{{ $clientes->lastPage() }}</a>
+                            <a href="{{ $fornecedores->url($fornecedores->lastPage()) }}" class="px-3 py-2 bg-white border border-border text-foreground rounded hover:bg-muted transition-colors">{{ $fornecedores->lastPage() }}</a>
                         @endif
                     </div>
 
-                    @if ($clientes->hasMorePages())
-                        <a href="{{ $clientes->nextPageUrl() }}" class="px-3 py-2 bg-white border border-border text-foreground rounded hover:bg-muted transition-colors">Próximo</a>
+                    @if ($fornecedores->hasMorePages())
+                        <a href="{{ $fornecedores->nextPageUrl() }}" class="px-3 py-2 bg-white border border-border text-foreground rounded hover:bg-muted transition-colors">Próximo</a>
                     @else
                         <span class="px-3 py-2 bg-muted/50 text-muted-foreground rounded cursor-not-allowed">Próximo</span>
                     @endif

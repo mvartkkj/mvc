@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Cadastrar Cliente - Sabor & Cia</title>
+    <title>Cadastrar Fornecedor - Sabor & Cia</title>
 
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
@@ -353,7 +353,7 @@
 
             <div class="menu-section">
                 <div class="menu-section-title">Gestão</div>
-                <a href="{{ route('admin.clientes') }}" class="menu-item active">
+                <a href="{{ route('admin.clientes') }}" class="menu-item">
                     <span class="menu-item-icon">👥</span>
                     Gerenciar Clientes
                 </a>
@@ -369,10 +369,10 @@
 
             <div class="menu-section">
                 <div class="menu-section-title">Estoque</div>
-                <a href="{{ route('admin.fornecedores') }}" class="menu-item">
-    <span class="menu-item-icon">🚚</span>
-    Fornecedores
-</a>
+                <a href="{{ route('admin.fornecedores') }}" class="menu-item active">
+                    <span class="menu-item-icon">🚚</span>
+                    Fornecedores
+                </a>
                 <a href="{{ route('admin.dashboard') }}" class="menu-item">
                     <span class="menu-item-icon">🧀</span>
                     Ingredientes
@@ -396,8 +396,8 @@
     <div class="main-content">
         <div class="top-bar">
             <div>
-                <h1 class="text-xl font-semibold text-foreground">Cadastrar Cliente</h1>
-                <p class="text-sm text-muted-foreground">Adicione um novo cliente ao sistema</p>
+                <h1 class="text-xl font-semibold text-foreground">Cadastrar Fornecedor</h1>
+                <p class="text-sm text-muted-foreground">Adicione um novo fornecedor ao sistema</p>
             </div>
             <form method="POST" action="{{ route('logout') }}">
                 @csrf
@@ -406,8 +406,8 @@
         </div>
 
         <div class="content-card">
-            <h2>Novo Cliente</h2>
-            <p>Preencha os campos abaixo para cadastrar um novo cliente. Os campos marcados com * são obrigatórios.</p>
+            <h2>Novo Fornecedor</h2>
+            <p>Preencha os campos abaixo para cadastrar um novo fornecedor. Os campos marcados com * são obrigatórios.</p>
 
             @if($errors->any())
             <div style="background: #fee; border: 1px solid #fcc; color: #c33; padding: 12px; border-radius: 6px; margin-bottom: 20px;">
@@ -419,84 +419,64 @@
             </div>
             @endif
 
-            <form method="POST" action="{{ route('admin.clientes.store') }}">
+            <form method="POST" action="{{ route('admin.fornecedores.store') }}">
                 @csrf
 
                 <div class="form-grid">
-                    <!-- Nome -->
+                    <!-- Nome Social -->
                     <div class="form-group full-width">
-                        <label class="form-label required" for="nome">Nome Completo</label>
+                        <label class="form-label required" for="nome_social">Nome Social / Razão Social</label>
                         <input 
                             type="text" 
-                            id="nome" 
-                            name="nome" 
-                            class="form-input @error('nome') error @enderror" 
-                            value="{{ old('nome') }}" 
+                            id="nome_social" 
+                            name="nome_social" 
+                            class="form-input @error('nome_social') error @enderror" 
+                            value="{{ old('nome_social') }}" 
                             required
                         />
-                        @error('nome')
+                        @error('nome_social')
                             <span class="form-error">{{ $message }}</span>
                         @enderror
                     </div>
 
-                    <!-- CPF -->
-                    <div class="form-group">
-                        <label class="form-label" for="cpf">CPF</label>
+                    <!-- Nome Fantasia -->
+                    <div class="form-group full-width">
+                        <label class="form-label" for="nome_fantasia">Nome Fantasia</label>
                         <input 
                             type="text" 
-                            id="cpf" 
-                            name="cpf" 
-                            class="form-input @error('cpf') error @enderror" 
-                            value="{{ old('cpf') }}"
-                            placeholder="12345678900"
-                            maxlength="11"
+                            id="nome_fantasia" 
+                            name="nome_fantasia" 
+                            class="form-input @error('nome_fantasia') error @enderror" 
+                            value="{{ old('nome_fantasia') }}"
+                        />
+                        @error('nome_fantasia')
+                            <span class="form-error">{{ $message }}</span>
+                        @enderror
+                    </div>
+
+                    <!-- CNPJ -->
+                    <div class="form-group">
+                        <label class="form-label" for="cnpj">CNPJ</label>
+                        <input 
+                            type="text" 
+                            id="cnpj" 
+                            name="cnpj" 
+                            class="form-input @error('cnpj') error @enderror" 
+                            value="{{ old('cnpj') }}"
+                            placeholder="12345678000190"
+                            maxlength="14"
                             pattern="[0-9]*"
                             inputmode="numeric"
                         />
-                        <span class="form-hint">Apenas números (11 dígitos)</span>
-                        @error('cpf')
-                            <span class="form-error">{{ $message }}</span>
-                        @enderror
-                    </div>
-
-                    <!-- RG -->
-                    <div class="form-group">
-                        <label class="form-label" for="rg">RG</label>
-                        <input 
-                            type="text" 
-                            id="rg" 
-                            name="rg" 
-                            class="form-input @error('rg') error @enderror" 
-                            value="{{ old('rg') }}"
-                            placeholder="123456789"
-                            maxlength="12"
-                            pattern="[0-9]*"
-                            inputmode="numeric"
-                        />
-                        <span class="form-hint">Apenas números (até 12 dígitos)</span>
-                        @error('rg')
-                            <span class="form-error">{{ $message }}</span>
-                        @enderror
-                    </div>
-
-                    <!-- Data de Nascimento -->
-                    <div class="form-group">
-                        <label class="form-label" for="data_nasc">Data de Nascimento</label>
-                        <input 
-                            type="date" 
-                            id="data_nasc" 
-                            name="data_nasc" 
-                            class="form-input @error('data_nasc') error @enderror" 
-                            value="{{ old('data_nasc') }}"
-                        />
-                        @error('data_nasc')
+                        <span class="form-hint">Apenas números (14 dígitos)</span>
+                        @error('cnpj')
                             <span class="form-error">{{ $message }}</span>
                         @enderror
                     </div>
 
                     <!-- Celular -->
                     <div class="form-group">
-                        <label class="form-label" for="celular">Celular</label>
+                        <label class="form-label" for="celular">Celular / Telefone</label>
                         <input 
                             type="text" 
                             id="celular" 
@@ -516,14 +496,13 @@
 
                     <!-- Email -->
                     <div class="form-group full-width">
-                        <label class="form-label required" for="e_mail">E-mail</label>
+                        <label class="form-label" for="e_mail">E-mail</label>
                         <input 
                             type="email" 
                             id="e_mail" 
                             name="e_mail" 
                             class="form-input @error('e_mail') error @enderror" 
                             value="{{ old('e_mail') }}"
-                            required
                         />
                         @error('e_mail')
                             <span class="form-error">{{ $message }}</span>
@@ -617,60 +596,19 @@
                             <span class="form-error">{{ $message }}</span>
                         @enderror
                     </div>
-
-                    <!-- Cargo -->
-                    <div class="form-group">
-                        <label class="form-label required" for="cargo_id">Cargo</label>
-                        <select 
-                            id="cargo_id" 
-                            name="cargo_id" 
-                            class="form-select @error('cargo_id') error @enderror"
-                            required
-                        >
-                            <option value="">Selecione...</option>
-                            @foreach($cargos as $cargo)
-                                <option value="{{ $cargo->id }}" {{ old('cargo_id') == $cargo->id ? 'selected' : '' }}>
-                                    {{ $cargo->nome }}
-                                </option>
-                            @endforeach
-                        </select>
-                        @error('cargo_id')
-                            <span class="form-error">{{ $message }}</span>
-                        @enderror
-                    </div>
-
-                    <!-- Senha -->
-                    <div class="form-group full-width">
-                        <label class="form-label required" for="passwd">Senha</label>
-                        <input 
-                            type="password" 
-                            id="passwd" 
-                            name="passwd" 
-                            class="form-input @error('passwd') error @enderror" 
-                            placeholder="Digite uma senha (mínimo 6 caracteres)"
-                            required
-                        />
-                        @error('passwd')
-                            <span class="form-error">{{ $message }}</span>
-                        @enderror
-                    </div>
                 </div>
 
                 <div class="form-actions">
-                    <a href="{{ route('admin.clientes') }}" class="btn-secondary">Cancelar</a>
-                    <button type="submit" class="btn-primary">Cadastrar Cliente</button>
+                    <a href="{{ route('admin.fornecedores') }}" class="btn-secondary">Cancelar</a>
+                    <button type="submit" class="btn-primary">Cadastrar Fornecedor</button>
                 </div>
             </form>
         </div>
     </div>
 
     <script>
-        // Apenas REMOVE caracteres não numéricos em campos numéricos
-        document.getElementById('cpf').addEventListener('input', function(e) {
-            this.value = this.value.replace(/\D/g, '');
-        });
-
-        document.getElementById('rg').addEventListener('input', function(e) {
+        // Remove caracteres não numéricos em campos numéricos
+        document.getElementById('cnpj').addEventListener('input', function(e) {
             this.value = this.value.replace(/\D/g, '');
         });
 
