@@ -691,32 +691,39 @@
 
     <script>
         document.querySelectorAll('.menu-item').forEach(item => {
-            item.addEventListener('click', function(e) {
-                const sectionId = this.getAttribute('data-section');
-                
-                // Se for "clientes", redireciona para a rota
-                if (sectionId === 'clientes') {
-                    window.location.href = '{{ route("admin.clientes") }}';
-                    return;
-                }
-
-                if (sectionId === 'fornecedores') {
-                    window.location.href = '{{ route("admin.fornecedores") }}';
-                    return;
-                }
-                
-                e.preventDefault();
-                
-                document.querySelectorAll('.menu-item').forEach(mi => mi.classList.remove('active'));
-                this.classList.add('active');
-                
-                document.querySelectorAll('.content-section').forEach(section => {
-                    section.classList.remove('active');
-                });
-                
-                document.getElementById(sectionId).classList.add('active');
-            });
+    item.addEventListener('click', function(e) {
+        const sectionId = this.getAttribute('data-section');
+        
+        // Se for "clientes", redireciona para a rota
+        if (sectionId === 'clientes') {
+            window.location.href = '{{ route("admin.clientes") }}';
+            return;
+        }
+        
+        // Se for "fornecedores", redireciona para a rota
+        if (sectionId === 'fornecedores') {
+            window.location.href = '{{ route("admin.fornecedores") }}';
+            return;
+        }
+        
+        // Se for "ingredientes", redireciona para a rota
+        if (sectionId === 'ingredientes') {
+            window.location.href = '{{ route("admin.ingredientes") }}';
+            return;
+        }
+        
+        e.preventDefault();
+        
+        document.querySelectorAll('.menu-item').forEach(mi => mi.classList.remove('active'));
+        this.classList.add('active');
+        
+        document.querySelectorAll('.content-section').forEach(section => {
+            section.classList.remove('active');
         });
+        
+        document.getElementById(sectionId).classList.add('active');
+    });
+});
 
         // Manter aba ativa se vier de search/paginação
         const urlParams = new URLSearchParams(window.location.search);

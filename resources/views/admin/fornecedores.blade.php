@@ -230,10 +230,10 @@
                     <span class="menu-item-icon">🚚</span>
                     Fornecedores
                 </a>
-                <a href="{{ route('admin.dashboard') }}" class="menu-item">
-                    <span class="menu-item-icon">🧀</span>
-                    Ingredientes
-                </a>
+                <a href="{{ route('admin.ingredientes') }}" class="menu-item">
+    <span class="menu-item-icon">🧀</span>
+    Ingredientes
+</a>
             </div>
 
             <div class="menu-section">

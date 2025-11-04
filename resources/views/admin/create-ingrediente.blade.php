@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Editar Cliente - Sabor & Cia</title>
+    <title>Cadastrar Ingrediente - Sabor & Cia</title>
 
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
@@ -139,6 +139,11 @@
             color: #0a0a0a;
         }
 
+        .form-label.required::after {
+            content: ' *';
+            color: #ef4444;
+        }
+
         .form-input, .form-select {
             height: 40px;
             padding: 0 12px;
@@ -156,10 +161,32 @@
             box-shadow: 0 0 0 3px rgba(234, 88, 12, 0.1);
         }
 
+        .form-input.error, .form-select.error {
+            border-color: #ef4444;
+        }
+
         .form-error {
             font-size: 12px;
             color: #ef4444;
             margin-top: 4px;
+        }
+
+        .form-hint {
+            font-size: 11px;
+            color: #737373;
+            margin-top: 2px;
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .checkbox-input {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
         }
 
         .btn-logout {
@@ -272,7 +299,7 @@
 
             <div class="menu-section">
                 <div class="menu-section-title">Gestão</div>
-                <a href="{{ route('admin.clientes') }}" class="menu-item active">
+                <a href="{{ route('admin.clientes') }}" class="menu-item">
                     <span class="menu-item-icon">👥</span>
                     Gerenciar Clientes
                 </a>
@@ -289,13 +316,13 @@
             <div class="menu-section">
                 <div class="menu-section-title">Estoque</div>
                 <a href="{{ route('admin.fornecedores') }}" class="menu-item">
-    <span class="menu-item-icon">🚚</span>
-    Fornecedores
-</a>
-                <a href="{{ route('admin.ingredientes') }}" class="menu-item">
-    <span class="menu-item-icon">🧀</span>
-    Ingredientes
-</a>
+                    <span class="menu-item-icon">🚚</span>
+                    Fornecedores
+                </a>
+                <a href="{{ route('admin.ingredientes') }}" class="menu-item active">
+                    <span class="menu-item-icon">🧀</span>
+                    Ingredientes
+                </a>
             </div>
 
             <div class="menu-section">
@@ -315,8 +342,8 @@
     <div class="main-content">
         <div class="top-bar">
             <div>
-                <h1 class="text-xl font-semibold text-foreground">Editar Cliente</h1>
-                <p class="text-sm text-muted-foreground">Atualize as informações do cliente</p>
+                <h1 class="text-xl font-semibold text-foreground">Cadastrar Ingrediente</h1>
+                <p class="text-sm text-muted-foreground">Adicione um novo ingrediente ao estoque</p>
             </div>
             <form method="POST" action="{{ route('logout') }}">
                 @csrf
@@ -325,8 +352,8 @@
         </div>
 
         <div class="content-card">
-            <h2>Dados do Cliente #{{ $cliente->cod_cliente }}</h2>
-            <p>Preencha os campos abaixo para atualizar as informações</p>
+            <h2>Novo Ingrediente</h2>
+            <p>Preencha os campos abaixo para cadastrar um novo ingrediente. Os campos marcados com * são obrigatórios.</p>
 
             @if($errors->any())
             <div style="background: #fee; border: 1px solid #fcc; color: #c33; padding: 12px; border-radius: 6px; margin-bottom: 20px;">
@@ -338,226 +365,105 @@
             </div>
             @endif
 
-            <form method="POST" action="{{ route('admin.clientes.update', $cliente->cod_cliente) }}">
+            <form method="POST" action="{{ route('admin.ingredientes.store') }}">
                 @csrf
-                @method('PUT')
 
                 <div class="form-grid">
-                    <!-- Nome -->
+                    <!-- Descrição -->
                     <div class="form-group full-width">
-                        <label class="form-label" for="nome">Nome Completo *</label>
+                        <label class="form-label required" for="descricao">Nome do Ingrediente</label>
                         <input 
                             type="text" 
-                            id="nome" 
-                            name="nome" 
-                            class="form-input" 
-                            value="{{ old('nome', $cliente->nome) }}" 
+                            id="descricao" 
+                            name="descricao" 
+                            class="form-input @error('descricao') error @enderror" 
+                            value="{{ old('descricao') }}" 
                             required
+                            maxlength="100"
                         />
-                        @error('nome')
+                        @error('descricao')
                             <span class="form-error">{{ $message }}</span>
                         @enderror
                     </div>
 
-                    <!-- CPF -->
+                    <!-- Unidade -->
                     <div class="form-group">
-                        <label class="form-label" for="cpf">CPF</label>
-                        <input 
-                            type="text" 
-                            id="cpf" 
-                            name="cpf" 
-                            class="form-input" 
-                            value="{{ old('cpf', $cliente->cpf) }}"
-                            placeholder="000.000.000-00"
-                        />
-                        @error('cpf')
-                            <span class="form-error">{{ $message }}</span>
-                        @enderror
-                    </div>
-
-                    <!-- RG -->
-                    <div class="form-group">
-                        <label class="form-label" for="rg">RG</label>
-                        <input 
-                            type="text" 
-                            id="rg" 
-                            name="rg" 
-                            class="form-input" 
-                            value="{{ old('rg', $cliente->rg) }}"
-                        />
-                        @error('rg')
-                            <span class="form-error">{{ $message }}</span>
-                        @enderror
-                    </div>
-
-                    <!-- Data de Nascimento -->
-                    <div class="form-group">
-                        <label class="form-label" for="data_nasc">Data de Nascimento</label>
-                        <input 
-                            type="date" 
-                            id="data_nasc" 
-                            name="data_nasc" 
-                            class="form-input" 
-                            value="{{ old('data_nasc', $cliente->data_nasc) }}"
-                        />
-                        @error('data_nasc')
-                            <span class="form-error">{{ $message }}</span>
-                        @enderror
-                    </div>
-
-                    <!-- Celular -->
-                    <div class="form-group">
-                        <label class="form-label" for="celular">Celular</label>
-                        <input 
-                            type="text" 
-                            id="celular" 
-                            name="celular" 
-                            class="form-input" 
-                            value="{{ old('celular', $cliente->celular) }}"
-                            placeholder="(00) 00000-0000"
-                        />
-                        @error('celular')
-                            <span class="form-error">{{ $message }}</span>
-                        @enderror
-                    </div>
-
-                    <!-- Email -->
-                    <div class="form-group full-width">
-                        <label class="form-label" for="e_mail">E-mail</label>
-                        <input 
-                            type="email" 
-                            id="e_mail" 
-                            name="e_mail" 
-                            class="form-input" 
-                            value="{{ old('e_mail', $cliente->e_mail) }}"
-                        />
-                        @error('e_mail')
-                            <span class="form-error">{{ $message }}</span>
-                        @enderror
-                    </div>
-
-                    <!-- Endereço -->
-                    <div class="form-group">
-                        <label class="form-label" for="endereco">Endereço</label>
-                        <input 
-                            type="text" 
-                            id="endereco" 
-                            name="endereco" 
-                            class="form-input" 
-                            value="{{ old('endereco', $cliente->endereco) }}"
-                        />
-                        @error('endereco')
-                            <span class="form-error">{{ $message }}</span>
-                        @enderror
-                    </div>
-
-                    <!-- Número -->
-                    <div class="form-group">
-                        <label class="form-label" for="numero">Número</label>
-                        <input 
-                            type="text" 
-                            id="numero" 
-                            name="numero" 
-                            class="form-input" 
-                            value="{{ old('numero', $cliente->numero) }}"
-                        />
-                        @error('numero')
-                            <span class="form-error">{{ $message }}</span>
-                        @enderror
-                    </div>
-
-                    <!-- Bairro -->
-                    <div class="form-group">
-                        <label class="form-label" for="bairro">Bairro</label>
-                        <input 
-                            type="text" 
-                            id="bairro" 
-                            name="bairro" 
-                            class="form-input" 
-                            value="{{ old('bairro', $cliente->bairro) }}"
-                        />
-                        @error('bairro')
-                            <span class="form-error">{{ $message }}</span>
-                        @enderror
-                    </div>
-
-                    <!-- Cidade -->
-                    <div class="form-group">
-                        <label class="form-label" for="cod_cidade">Cidade</label>
+                        <label class="form-label required" for="cod_unidade">Unidade de Medida</label>
                         <select 
-                            id="cod_cidade" 
-                            name="cod_cidade" 
-                            class="form-select"
+                            id="cod_unidade" 
+                            name="cod_unidade" 
+                            class="form-select @error('cod_unidade') error @enderror"
+                            required
                         >
                             <option value="">Selecione...</option>
-                            @foreach($cidades as $cidade)
-                                <option value="{{ $cidade->cod_cidade }}" 
-                                    {{ old('cod_cidade', $cliente->cod_cidade) == $cidade->cod_cidade ? 'selected' : '' }}>
-                                    {{ $cidade->nome }} - {{ $cidade->uf }}
+                            @foreach($unidades as $unidade)
+                                <option value="{{ $unidade->cod_unidade }}" {{ old('cod_unidade') == $unidade->cod_unidade ? 'selected' : '' }}>
+                                    {{ $unidade->descricao }} ({{ $unidade->sigla }})
                                 </option>
                             @endforeach
                         </select>
-                        @error('cod_cidade')
+                        @error('cod_unidade')
                             <span class="form-error">{{ $message }}</span>
                         @enderror
                     </div>
 
-                    <!-- CEP -->
+                    <!-- Valor Unitário -->
                     <div class="form-group">
-                        <label class="form-label" for="cep">CEP</label>
+                        <label class="form-label" for="valor_unitario">Valor Unitário (R$)</label>
                         <input 
-                            type="text" 
-                            id="cep" 
-                            name="cep" 
-                            class="form-input" 
-                            value="{{ old('cep', $cliente->cep) }}"
-                            placeholder="00000-000"
+                            type="number" 
+                            id="valor_unitario" 
+                            name="valor_unitario" 
+                            class="form-input @error('valor_unitario') error @enderror" 
+                            value="{{ old('valor_unitario', '0.00') }}"
+                            step="0.01"
+                            min="0"
                         />
-                        @error('cep')
+                        <span class="form-hint">Valor por unidade de medida</span>
+                        @error('valor_unitario')
                             <span class="form-error">{{ $message }}</span>
                         @enderror
                     </div>
 
-                    <!-- Cargo -->
+                    <!-- Controla Estoque -->
                     <div class="form-group">
-                        <label class="form-label" for="cargo_id">Cargo</label>
-                        <select 
-                            id="cargo_id" 
-                            name="cargo_id" 
-                            class="form-select"
-                        >
-                            <option value="">Selecione...</option>
-                            @foreach($cargos as $cargo)
-                                <option value="{{ $cargo->id }}" 
-                                    {{ old('cargo_id', $cliente->cargo_id) == $cargo->id ? 'selected' : '' }}>
-                                    {{ $cargo->nome }}
-                                </option>
-                            @endforeach
-                        </select>
-                        @error('cargo_id')
-                            <span class="form-error">{{ $message }}</span>
-                        @enderror
+                        <label class="form-label" for="controla_estoque">Controle de Estoque</label>
+                        <div class="checkbox-group">
+                            <input 
+                                type="checkbox" 
+                                id="controla_estoque" 
+                                name="controla_estoque" 
+                                class="checkbox-input"
+                                value="1"
+                                {{ old('controla_estoque') ? 'checked' : '' }}
+                            />
+                            <label for="controla_estoque" style="cursor: pointer;">Ativar controle de estoque</label>
+                        </div>
+                        <span class="form-hint">Marque para controlar a quantidade em estoque</span>
                     </div>
 
-                    <!-- Senha -->
-                    <div class="form-group full-width">
-                        <label class="form-label" for="passwd">Nova Senha (deixe em branco para manter a atual)</label>
+                    <!-- Quantidade Estoque -->
+                    <div class="form-group">
+                        <label class="form-label" for="quantidade_estoque">Quantidade em Estoque</label>
                         <input 
-                            type="password" 
-                            id="passwd" 
-                            name="passwd" 
-                            class="form-input" 
-                            placeholder="Digite uma nova senha (mínimo 6 caracteres)"
+                            type="number" 
+                            id="quantidade_estoque" 
+                            name="quantidade_estoque" 
+                            class="form-input @error('quantidade_estoque') error @enderror" 
+                            value="{{ old('quantidade_estoque', '0') }}"
+                            step="0.1"
+                            min="0"
                         />
-                        @error('passwd')
+                        <span class="form-hint">Quantidade atual disponível</span>
+                        @error('quantidade_estoque')
                             <span class="form-error">{{ $message }}</span>
                         @enderror
                     </div>
                 </div>
 
                 <div class="form-actions">
-                    <a href="{{ route('admin.clientes') }}" class="btn-secondary">Cancelar</a>
-                    <button type="submit" class="btn-primary">Salvar Alterações</button>
+                    <a href="{{ route('admin.ingredientes') }}" class="btn-secondary">Cancelar</a>
+                    <button type="submit" class="btn-primary">Cadastrar Ingrediente</button>
                 </div>
             </form>
         </div>

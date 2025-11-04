@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Clientes - Sabor & Cia</title>
+    <title>Ingredientes - Sabor & Cia</title>
 
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
@@ -180,6 +180,33 @@
             font-weight: 700;
             color: #0a0a0a;
         }
+
+        .status-badge {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .status-ok {
+            background: #f0fdf4;
+            color: #22c55e;
+        }
+
+        .status-baixo {
+            background: #fef3c7;
+            color: #f59e0b;
+        }
+
+        .status-critico {
+            background: #fee;
+            color: #ef4444;
+        }
+
+        .status-sem-controle {
+            background: #f5f5f5;
+            color: #737373;
+        }
     </style>
 </head>
 <body class="bg-background">
@@ -210,7 +237,7 @@
 
             <div class="menu-section">
                 <div class="menu-section-title">Gestão</div>
-                <a href="{{ route('admin.clientes') }}" class="menu-item active">
+                <a href="{{ route('admin.clientes') }}" class="menu-item">
                     <span class="menu-item-icon">👥</span>
                     Gerenciar Clientes
                 </a>
@@ -230,10 +257,10 @@
                     <span class="menu-item-icon">🚚</span>
                     Fornecedores
                 </a>
-                <a href="{{ route('admin.ingredientes') }}" class="menu-item">
-    <span class="menu-item-icon">🧀</span>
-    Ingredientes
-</a>
+                <a href="{{ route('admin.ingredientes') }}" class="menu-item active">
+                    <span class="menu-item-icon">🧀</span>
+                    Ingredientes
+                </a>
             </div>
 
             <div class="menu-section">
@@ -253,8 +280,8 @@
     <div class="main-content">
         <div class="top-bar">
             <div>
-                <h1 class="text-xl font-semibold text-foreground">Gerenciar Clientes</h1>
-                <p class="text-sm text-muted-foreground">Lista de todos os clientes cadastrados</p>
+                <h1 class="text-xl font-semibold text-foreground">Ingredientes</h1>
+                <p class="text-sm text-muted-foreground">Controle de estoque de ingredientes e alertas de reposição</p>
             </div>
             <form method="POST" action="{{ route('logout') }}">
                 @csrf
@@ -278,29 +305,29 @@
             <div class="flex justify-between items-center mb-6">
                 <div class="flex w-full items-center">
                     <div>
-                        <h2>Lista de Clientes</h2>
-                        <p>Total: {{ $clientes->total() }} clientes cadastrados</p>
+                        <h2>Lista de Ingredientes</h2>
+                        <p>Total: {{ $ingredientes->total() }} ingredientes cadastrados</p>
                     </div>
                     <div class="flex gap-3 items-center ml-5">
-                        <!-- Botão de Cadastrar Novo Cliente -->
-                        <a href="{{ route('admin.clientes.create') }}" 
+                        <!-- Botão de Cadastrar Novo Ingrediente -->
+                        <a href="{{ route('admin.ingredientes.create') }}" 
                             style="background: #ef4444; color: white; padding: 10px 20px; border-radius: 6px; font-size: 14px; font-weight: 500; display: inline-flex; align-items: center; gap: 8px; text-decoration: none; transition: all 0.2s;"
                             onmouseover="this.style.background='#dc2626'" 
                             onmouseout="this.style.background='#ef4444'">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                     <path d="M12 5v14M5 12h14"/>
                                 </svg>
-                                Novo Cliente
+                                Novo Ingrediente
                         </a>
                     </div>
                 </div>
-                <form method="GET" action="{{ route('admin.clientes') }}" class="flex gap-2">
+                <form method="GET" action="{{ route('admin.ingredientes') }}" class="flex gap-2">
                     <div class="relative">
                         <input 
                             type="text" 
                             name="search" 
                             value="{{ $search ?? '' }}"
-                            placeholder="Buscar por nome, email, celular..." 
+                            placeholder="Buscar ingrediente..." 
                             class="w-80 h-10 pl-10 pr-4 bg-background border border-input rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50"
                         />
                         <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -311,7 +338,7 @@
                         Buscar
                     </button>
                     @if($search ?? false)
-                    <a href="{{ route('admin.clientes') }}" class="px-4 h-10 bg-muted text-foreground rounded-lg hover:bg-muted/80 transition-colors font-medium flex items-center">
+                    <a href="{{ route('admin.ingredientes') }}" class="px-4 h-10 bg-muted text-foreground rounded-lg hover:bg-muted/80 transition-colors font-medium flex items-center">
                         Limpar
                     </a>
                     @endif
@@ -323,34 +350,53 @@
                     <thead>
                         <tr>
                             <th>ID</th>
-                            <th>Nome</th>
-                            <th>Email</th>
-                            <th>Celular</th>
-                            <th>Cargo</th>
-                            <th>CEP</th>
-                            <th style="text-align: center; width: 150px;">Ações</th>
+                            <th>Ingrediente</th>
+                            <th>Quantidade</th>
+                            <th>Unidade</th>
+                            <th>Valor Unitário</th>
+                            <th>Status</th>
+                            <th style="text-align: center; width: 220px;">Ações</th>
                         </tr>
                     </thead>
                     <tbody>
-                        @forelse($clientes as $cliente)
+                        @forelse($ingredientes as $ingrediente)
                         <tr>
-                            <td>#{{ $cliente->cod_cliente }}</td>
-                            <td>{{ $cliente->nome }}</td>
-                            <td>{{ $cliente->e_mail ?? '-' }}</td>
-                            <td>{{ $cliente->celular ?? '-' }}</td>
+                            <td>#{{ str_pad($ingrediente->cod_ingrediente, 3, '0', STR_PAD_LEFT) }}</td>
+                            <td>{{ $ingrediente->descricao }}</td>
+                            <td>{{ number_format($ingrediente->quantidade_estoque ?? 0, 1, ',', '.') }}</td>
+                            <td>{{ $ingrediente->unidade->sigla ?? '-' }}</td>
+                            <td>R$ {{ number_format($ingrediente->valor_unitario ?? 0, 2, ',', '.') }}</td>
                             <td>
-                                @if($cliente->cargo)
-                                    <span class="px-2 py-1 bg-primary/10 text-primary rounded text-xs font-medium">
-                                        {{ $cliente->cargo->nome }}
+                                @if($ingrediente->controla_estoque)
+                                    <span class="status-badge status-{{ $ingrediente->status_estoque }}">
+                                        {{ $ingrediente->texto_status }}
                                     </span>
                                 @else
-                                    <span class="text-muted-foreground">-</span>
+                                    <span class="status-badge status-sem-controle">Sem Controle</span>
                                 @endif
                             </td>
-                            <td>{{ $cliente->cep ?? '-' }}</td>
                             <td>
                                 <div class="flex gap-2 justify-center">
-                                    <a href="{{ route('admin.clientes.edit', $cliente->cod_cliente) }}" 
+                                    <!-- Botão Adicionar Estoque -->
+                                    @if($ingrediente->controla_estoque)
+                                    <button 
+                                        type="button"
+                                        class="btn-add-estoque"
+                                        data-ingrediente-id="{{ $ingrediente->cod_ingrediente }}"
+                                        data-ingrediente-nome="{{ $ingrediente->descricao }}"
+                                        data-ingrediente-unidade="{{ $ingrediente->unidade->sigla ?? '' }}"
+                                        data-ingrediente-quantidade="{{ $ingrediente->quantidade_estoque ?? 0 }}"
+                                        style="background: #22c55e; color: white; padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: 500; display: inline-flex; align-items: center; gap: 4px; border: none; cursor: pointer; transition: all 0.2s;"
+                                        onmouseover="this.style.background='#16a34a'" 
+                                        onmouseout="this.style.background='#22c55e'">
+                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width: 14px; height: 14px;">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                                        </svg>
+                                        Adicionar
+                                    </button>
+                                    @endif
+                                    
+                                    <a href="{{ route('admin.ingredientes.edit', $ingrediente->cod_ingrediente) }}" 
                                     style="background: #0a0a0a; color: white; padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: 500; display: inline-flex; align-items: center; gap: 4px; text-decoration: none; transition: all 0.2s;"
                                     onmouseover="this.style.background='#3a3939ff'" 
                                     onmouseout="this.style.background='#0a0a0a'">
@@ -359,11 +405,11 @@
                                         </svg>
                                         Editar
                                     </a>
-                                    <form method="POST" action="{{ route('admin.clientes.delete', $cliente->cod_cliente) }}" class="delete-form" style="display: inline;">
+                                    <form method="POST" action="{{ route('admin.ingredientes.destroy', $ingrediente->cod_ingrediente) }}" class="delete-form" style="display: inline;">
                                         @csrf
                                         @method('DELETE')
                                         <button type="button" class="btn-delete" 
-                                                data-cliente-nome="{{ $cliente->nome }}"
+                                                data-ingrediente-nome="{{ $ingrediente->descricao }}"
                                                 style="background: #ef4444; color: white; padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: 500; display: inline-flex; align-items: center; gap: 4px; border: none; cursor: pointer; transition: all 0.2s;"
                                                 onmouseover="this.style.background='#dc2626'" 
                                                 onmouseout="this.style.background='#ef4444'">
@@ -380,9 +426,9 @@
                         <tr>
                             <td colspan="7" class="text-center text-muted-foreground py-8">
                                 @if($search ?? false)
-                                    Nenhum cliente encontrado com "{{ $search }}"
+                                    Nenhum ingrediente encontrado com "{{ $search }}"
                                 @else
-                                    Nenhum cliente cadastrado
+                                    Nenhum ingrediente cadastrado
                                 @endif
                             </td>
                         </tr>
@@ -394,17 +440,100 @@
             <!-- SweetAlert2 -->
             <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
             <script>
-                // Seleciona TODOS os botões de exclusão
+                // Modal de Adicionar Estoque
+                document.querySelectorAll('.btn-add-estoque').forEach(function(button) {
+                    button.addEventListener('click', function(event) {
+                        event.preventDefault();
+                        
+                        const ingredienteId = this.getAttribute('data-ingrediente-id');
+                        const ingredienteNome = this.getAttribute('data-ingrediente-nome');
+                        const ingredienteUnidade = this.getAttribute('data-ingrediente-unidade');
+                        const quantidadeAtual = parseFloat(this.getAttribute('data-ingrediente-quantidade'));
+
+                        Swal.fire({
+                            title: 'Adicionar ao Estoque',
+                            html: `
+                                <div style="text-align: left;">
+                                    <p style="margin-bottom: 10px;"><strong>Ingrediente:</strong> ${ingredienteNome}</p>
+                                    <p style="margin-bottom: 20px;"><strong>Quantidade Atual:</strong> ${quantidadeAtual.toFixed(1)} ${ingredienteUnidade}</p>
+                                    <label for="quantidade-adicionar" style="display: block; margin-bottom: 8px; font-weight: 500;">Quantidade a Adicionar (${ingredienteUnidade}):</label>
+                                    <input 
+                                        type="number" 
+                                        id="quantidade-adicionar" 
+                                        class="swal2-input" 
+                                        placeholder="Ex: 10"
+                                        step="0.1"
+                                        min="0.1"
+                                        style="width: 100%; padding: 10px; border: 1px solid #e5e5e5; border-radius: 6px;"
+                                    >
+                                </div>
+                            `,
+                            icon: 'info',
+                            showCancelButton: true,
+                            confirmButtonColor: '#22c55e',
+                            cancelButtonColor: '#6b7280',
+                            confirmButtonText: 'Adicionar',
+                            cancelButtonText: 'Cancelar',
+                            focusConfirm: false,
+                            preConfirm: () => {
+                                const quantidade = document.getElementById('quantidade-adicionar').value;
+                                if (!quantidade || parseFloat(quantidade) <= 0) {
+                                    Swal.showValidationMessage('Por favor, informe uma quantidade válida');
+                                    return false;
+                                }
+                                return { quantidade: parseFloat(quantidade) };
+                            }
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                const quantidade = result.value.quantidade;
+                                const novaQuantidade = quantidadeAtual + quantidade;
+                                
+                                // Criar formulário e enviar
+                                const form = document.createElement('form');
+                                form.method = 'POST';
+                                form.action = `/admin/ingredientes/${ingredienteId}/adicionar-estoque`;
+                                
+                                const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
+                                const csrfInput = document.createElement('input');
+                                csrfInput.type = 'hidden';
+                                csrfInput.name = '_token';
+                                csrfInput.value = csrfToken;
+                                form.appendChild(csrfInput);
+                                
+                                const quantidadeInput = document.createElement('input');
+                                quantidadeInput.type = 'hidden';
+                                quantidadeInput.name = 'quantidade_adicionar';
+                                quantidadeInput.value = quantidade;
+                                form.appendChild(quantidadeInput);
+                                
+                                document.body.appendChild(form);
+                                
+                                Swal.fire({
+                                    title: 'Adicionando...',
+                                    text: 'Por favor, aguarde',
+                                    allowOutsideClick: false,
+                                    didOpen: () => {
+                                        Swal.showLoading();
+                                    }
+                                });
+                                
+                                form.submit();
+                            }
+                        });
+                    });
+                });
+
+                // Exclusão de ingredientes
                 document.querySelectorAll('.btn-delete').forEach(function(button) {
                     button.addEventListener('click', function(event) {
                         event.preventDefault();
                         
                         const form = this.closest('.delete-form');
-                        const clienteNome = this.getAttribute('data-cliente-nome');
+                        const ingredienteNome = this.getAttribute('data-ingrediente-nome');
 
                         Swal.fire({
                             title: 'Você tem certeza?',
-                            html: `Deseja realmente excluir o cliente <strong>${clienteNome}</strong>?<br><span style="color: #dc2626; font-size: 14px;">Esta ação não pode ser desfeita!</span>`,
+                            html: `Deseja realmente excluir o ingrediente <strong>${ingredienteNome}</strong>?<br><span style="color: #dc2626; font-size: 14px;">Esta ação não pode ser desfeita!</span>`,
                             icon: 'warning',
                             showCancelButton: true,
                             confirmButtonColor: '#ef4444',
@@ -431,44 +560,44 @@
             </script>
 
             <!-- Paginação -->
-            @if($clientes->hasPages())
+            @if($ingredientes->hasPages())
             <div class="mt-6 flex items-center justify-between border-t border-border pt-4">
                 <div class="text-sm text-muted-foreground">
-                    Mostrando {{ $clientes->firstItem() }} a {{ $clientes->lastItem() }} de {{ $clientes->total() }} clientes
+                    Mostrando {{ $ingredientes->firstItem() }} a {{ $ingredientes->lastItem() }} de {{ $ingredientes->total() }} ingredientes
                 </div>
                 <div class="flex gap-2">
-                    @if ($clientes->onFirstPage())
+                    @if ($ingredientes->onFirstPage())
                         <span class="px-3 py-2 bg-muted/50 text-muted-foreground rounded cursor-not-allowed">Anterior</span>
                     @else
-                        <a href="{{ $clientes->previousPageUrl() }}" class="px-3 py-2 bg-white border border-border text-foreground rounded hover:bg-muted transition-colors">Anterior</a>
+                        <a href="{{ $ingredientes->previousPageUrl() }}" class="px-3 py-2 bg-white border border-border text-foreground rounded hover:bg-muted transition-colors">Anterior</a>
                     @endif
 
                     <div class="flex gap-1">
-                        @if($clientes->currentPage() > 3)
-                            <a href="{{ $clientes->url(1) }}" class="px-3 py-2 bg-white border border-border text-foreground rounded hover:bg-muted transition-colors">1</a>
-                            @if($clientes->currentPage() > 4)
+                        @if($ingredientes->currentPage() > 3)
+                            <a href="{{ $ingredientes->url(1) }}" class="px-3 py-2 bg-white border border-border text-foreground rounded hover:bg-muted transition-colors">1</a>
+                            @if($ingredientes->currentPage() > 4)
                                 <span class="px-3 py-2 text-muted-foreground">...</span>
                             @endif
                         @endif
 
-                        @for($i = max(1, $clientes->currentPage() - 2); $i <= min($clientes->lastPage(), $clientes->currentPage() + 2); $i++)
-                            @if ($i == $clientes->currentPage())
+                        @for($i = max(1, $ingredientes->currentPage() - 2); $i <= min($ingredientes->lastPage(), $ingredientes->currentPage() + 2); $i++)
+                            @if ($i == $ingredientes->currentPage())
                                 <span class="px-3 py-2 bg-primary text-white rounded font-medium">{{ $i }}</span>
                             @else
-                                <a href="{{ $clientes->url($i) }}" class="px-3 py-2 bg-white border border-border text-foreground rounded hover:bg-muted transition-colors">{{ $i }}</a>
+                                <a href="{{ $ingredientes->url($i) }}" class="px-3 py-2 bg-white border border-border text-foreground rounded hover:bg-muted transition-colors">{{ $i }}</a>
                             @endif
                         @endfor
 
-                        @if($clientes->currentPage() < $clientes->lastPage() - 2)
-                            @if($clientes->currentPage() < $clientes->lastPage() - 3)
+                        @if($ingredientes->currentPage() < $ingredientes->lastPage() - 2)
+                            @if($ingredientes->currentPage() < $ingredientes->lastPage() - 3)
                                 <span class="px-3 py-2 text-muted-foreground">...</span>
                             @endif
-                            <a href="{{ $clientes->url($clientes->lastPage()) }}" class="px-3 py-2 bg-white border border-border text-foreground rounded hover:bg-muted transition-colors">{{ $clientes->lastPage() }}</a>
+                            <a href="{{ $ingredientes->url($ingredientes->lastPage()) }}" class="px-3 py-2 bg-white border border-border text-foreground rounded hover:bg-muted transition-colors">{{ $ingredientes->lastPage() }}</a>
                         @endif
                     </div>
 
-                    @if ($clientes->hasMorePages())
-                        <a href="{{ $clientes->nextPageUrl() }}" class="px-3 py-2 bg-white border border-border text-foreground rounded hover:bg-muted transition-colors">Próximo</a>
+                    @if ($ingredientes->hasMorePages())
+                        <a href="{{ $ingredientes->nextPageUrl() }}" class="px-3 py-2 bg-white border border-border text-foreground rounded hover:bg-muted transition-colors">Próximo</a>
                     @else
                         <span class="px-3 py-2 bg-muted/50 text-muted-foreground rounded cursor-not-allowed">Próximo</span>
                     @endif

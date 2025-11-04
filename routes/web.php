@@ -7,6 +7,7 @@ use App\Http\Controllers\MenuController;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\FornecedorController;
+use App\Http\Controllers\IngredienteController;
 
 // ============ ROTAS PÚBLICAS ============
 Route::get('/', function () {
@@ -63,6 +64,15 @@ Route::middleware(['admin'])->prefix('admin')->name('admin.')->group(function ()
     Route::get('/fornecedores/{id}/edit', [FornecedorController::class, 'edit'])->name('fornecedores.edit');
     Route::put('/fornecedores/{id}', [FornecedorController::class, 'update'])->name('fornecedores.update');
     Route::delete('/fornecedores/{id}', [FornecedorController::class, 'destroy'])->name('fornecedores.destroy');
+
+    // Ingredientes - CRUD Completo
+    Route::get('/ingredientes', [IngredienteController::class, 'index'])->name('ingredientes');
+    Route::get('/ingredientes/create', [IngredienteController::class, 'create'])->name('ingredientes.create');
+    Route::post('/ingredientes', [IngredienteController::class, 'store'])->name('ingredientes.store');
+    Route::get('/ingredientes/{id}/edit', [IngredienteController::class, 'edit'])->name('ingredientes.edit');
+    Route::put('/ingredientes/{id}', [IngredienteController::class, 'update'])->name('ingredientes.update');
+    Route::delete('/ingredientes/{id}', [IngredienteController::class, 'destroy'])->name('ingredientes.destroy');
+    Route::post('/ingredientes/{id}/adicionar-estoque', [IngredienteController::class, 'adicionarEstoque'])->name('ingredientes.adicionar-estoque');
 
     // Buscar cidades via AJAX
     Route::get('/buscar-cidades', [AdminController::class, 'buscarCidades'])->name('buscar.cidades');
